@@ -1,0 +1,12 @@
+/*
+ * CONTENT
+ */
+
+.content {
+    padding: 4em 1.5em !important;
+    text-align: center !important;
+}
+
+.bar.status-message {
+  position: static;
+}

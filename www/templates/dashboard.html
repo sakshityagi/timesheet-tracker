@@ -1,0 +1,24 @@
+<ion-view view-title={{projectName}}>
+  <ion-content>
+    <div class="list">
+      <label class="item item-input item-select">
+        <div class="input-label">
+          Duration
+        </div>
+        <select ng-model="selectedTime.key" ng-change="showWorkLogs()">
+          <option value="day">Today</option>
+          <option value="week">This Week</option>
+          <option value="month">This Month</option>
+        </select>
+      </label>
+    </div>
+    <div class="content">
+      <h1>WorkLogs</h1>
+    </div>
+    <ion-list>
+      <ion-item ng-repeat="data in dataList">
+        {{data.name}} - {{data.hours/3600 | number:2}} h
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

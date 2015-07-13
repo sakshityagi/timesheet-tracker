@@ -114,7 +114,12 @@ angular.module('starter.controllers', [])
       });
 
     $scope.showWorkLogs = function () {
-      $rootScope.selectedDuration = $scope.selectedTime.key;
+      if($scope.selectedTime.key == 'date'){
+
+      }
+      else{
+        $rootScope.selectedDuration = $scope.selectedTime.key;
+      }
       $state.transitionTo("app.dashboard", {
         duration: $scope.selectedTime.key,
         'projectId': $stateParams.projectId

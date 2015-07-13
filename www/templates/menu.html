@@ -18,9 +18,12 @@
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <ion-item nav-clear="" menu-close="" ui-sref="app.home">
-          Dashboard
-          </ion-item>
+        <ion-item nav-clear="" menu-close="" ui-sref="app.dashboard({projectId : 10800, duration : selectedDuration})">
+          Kokaihop
+        </ion-item>
+        <ion-item nav-clear="" menu-close="" ui-sref="app.dashboard({projectId : 10000, duration : selectedDuration})">
+          Mat.se
+        </ion-item>
         <ion-item nav-clear="" menu-close="" ng-click="logout()">
           Logout
         </ion-item>

@@ -9,15 +9,16 @@
           <option value="day">Today</option>
           <option value="week">This Week</option>
           <option value="month">This Month</option>
+          <option value="date">Pick a date</option>
         </select>
       </label>
     </div>
     <div class="content">
-      <h1>WorkLogs</h1>
+<h3>Worklogs</h3>
     </div>
     <ion-list>
       <ion-item ng-repeat="data in dataList">
-        {{data.name}} - {{data.hours/3600 | number:2}} h
+        <strong>{{data.name}}</strong> - {{data.hours/3600 | number:2}} h
       </ion-item>
     </ion-list>
   </ion-content>

@@ -5,7 +5,7 @@
         <div class="input-label">
           Duration
         </div>
-        <select ng-model="selectedTime.key" ng-change="showWorkLogs()">
+        <select ng-model="selectedTime.key" ng-change="showWorkLogs()" ng-click="resetDateModel()">
           <option value="day">Today</option>
           <option value="week">This Week</option>
           <option value="month">This Month</option>
@@ -14,7 +14,9 @@
       </label>
     </div>
     <div class="content">
-<h3>Worklogs</h3>
+      <h3>Worklogs
+        <span ng-show="currentSelectedDate"> ({{currentSelectedDate |
+          date:'mediumDate'}})</span></h3>
     </div>
     <ion-list>
       <ion-item ng-repeat="data in dataList">

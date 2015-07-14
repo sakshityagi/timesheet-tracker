@@ -55,75 +55,50 @@ angular.module('starter.controllers', [])
       $rootScope.selectedDuration = "month";
   })
 
-  .controller('DashboardCtrl', function ($scope, $stateParams, $http, Auth, $ionicLoading, $location, $state, $rootScope) {
+  .controller('DashboardCtrl', function ($scope, $stateParams, $http, Auth, $ionicLoading, $location, $state, $rootScope, $cordovaDatePicker) {
     var startDate, endDate;
-    $rootScope.selectedDuration = $stateParams.duration || "month";
-    $scope.selectedTime = {
-      "key": $stateParams.duration || ""
-    };
+
+    $scope.$on('$ionicView.enter', function (e) {
+      calculateDateRange();
+    });
+
 
     function generateDate(dateObj) {
       return dateObj.getFullYear() + "-" + (dateObj.getMonth() + 1) + "-" + (dateObj.getDate());
     }
 
     var today = new Date();
-    switch ($stateParams.duration) {
-      case 'day' :
-        startDate = endDate = generateDate(today);
-        break;
-      case 'week' :
-        console.log("Week");
-        startDate = generateDate(new Date(+getMonday(today)));
-        endDate = generateDate(new Date());
-        break;
-      case 'month' :
-        console.log("Month");
-        var y = today.getFullYear(), m = today.getMonth();
-        var firstDayOfMonth = new Date(y, m, 1);
-        firstDayOfMonth.setDate(1);
-        startDate = firstDayOfMonth;
-        startDate = generateDate(startDate);
-        endDate = generateDate(new Date());
-        break;
-      default :
-        startDate = endDate = generateDate(today);
-    }
-    if ($stateParams.projectId == 10800)
-      $scope.projectName = "Kokaihop.se";
-    else
-      $scope.projectName = "Mat.se";
-    var user = Auth.getUser();
-    $ionicLoading.show({
-      template: 'Loading...'
-    });
-    $http.post('http://www.manojnama.com/info/timesheet', {
-      'username': user.username,
-      'password': user.password,
-      'startDate': startDate,
-      'endDate': endDate,
-      'projectId': $stateParams.projectId
-    })
-      .success(function (response) {
-        console.log(response);
-        $ionicLoading.hide();
-        $scope.dataList = response;
+    calculateDateRange();
 
-      }).error(function (err) {
-        $ionicLoading.hide();
-        console.log(err);
-      });
-
+    $scope.resetDateModel = function () {
+      $scope.selectedTime.key = null;
+    };
     $scope.showWorkLogs = function () {
-      if($scope.selectedTime.key == 'date'){
-
+      if ($scope.selectedTime.key == 'date') {
+        $cordovaDatePicker.show({
+          date: new Date(),
+          mode: 'date', // or 'time'
+          allowOldDates: true,
+          allowFutureDates: false,
+          doneButtonLabel: 'DONE',
+          doneButtonColor: '#F2F3F4',
+          cancelButtonLabel: 'CANCEL',
+          cancelButtonColor: '#000000'
+        }).then(function (date) {
+          $state.transitionTo("app.dashboard", {
+            duration: 'date',
+            date: generateDate(date),
+            'projectId': $stateParams.projectId
+          });
+        });
       }
-      else{
+      else {
         $rootScope.selectedDuration = $scope.selectedTime.key;
+        $state.transitionTo("app.dashboard", {
+          duration: $scope.selectedTime.key,
+          'projectId': $stateParams.projectId
+        });
       }
-      $state.transitionTo("app.dashboard", {
-        duration: $scope.selectedTime.key,
-        'projectId': $stateParams.projectId
-      });
     };
 
     function getMonday(d) {
@@ -131,5 +106,65 @@ angular.module('starter.controllers', [])
       var day = d.getDay(),
         diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
       return new Date(d.setDate(diff));
+    }
+
+    function calculateDateRange() {
+      $scope.currentSelectedDate = null;
+      $rootScope.selectedDuration = $stateParams.duration || "month";
+      $scope.selectedTime = {
+        "key": $stateParams.duration || ""
+      };
+      switch ($stateParams.duration) {
+        case 'day' :
+          startDate = endDate = generateDate(today);
+          break;
+        case 'date' :
+          startDate = endDate = $stateParams.date;
+          $scope.currentSelectedDate = new Date($stateParams.date);
+          break;
+        case 'week' :
+          console.log("Week");
+          startDate = generateDate(new Date(+getMonday(today)));
+          endDate = generateDate(new Date());
+          break;
+        case 'month' :
+          console.log("Month");
+          var y = today.getFullYear(), m = today.getMonth();
+          var firstDayOfMonth = new Date(y, m, 1);
+          firstDayOfMonth.setDate(1);
+          startDate = firstDayOfMonth;
+          startDate = generateDate(startDate);
+          endDate = generateDate(new Date());
+          break;
+        default :
+          startDate = endDate = generateDate(today);
+      }
+      if ($stateParams.projectId == 10800)
+        $scope.projectName = "Kokaihop.se";
+      else
+        $scope.projectName = "Mat.se";
+
+      var user = Auth.getUser();
+
+      $ionicLoading.show({
+        template: 'Loading...'
+      });
+
+      $http.post('http://www.manojnama.com/info/timesheet', {
+        'username': user.username,
+        'password': user.password,
+        'startDate': startDate,
+        'endDate': endDate,
+        'projectId': $stateParams.projectId
+      })
+        .success(function (response) {
+          console.log(response);
+          $ionicLoading.hide();
+          $scope.dataList = response;
+
+        }).error(function (err) {
+          $ionicLoading.hide();
+          console.log(err);
+        });
     }
   });
